@@ -1,481 +1,132 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
-<meta charset="UTF-8"> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-<title>Enhanced Inventory Management System</title> 
-<style> 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;} 
-body{background-color:#f4f7f6;color:#333;padding:20px;} 
-.container{max-width:1200px;margin:0 auto;background:white;box-shadow:0 4px 6px 
-rgba(0,0,0,0.1);padding:20px;border-radius:8px;} 
-header{text-align:center;margin-bottom:30px;} 
-header h1{font-size:36px;color:#5A5A5A;} 
-.main-content{display:flex;flex-wrap:wrap;gap:20px;} 
-.left-panel{flex:1;min-width:300px;} 
-.right-panel{flex:1;min-width:300px;display:none;} 
-.inventory-form{margin-bottom:40px;padding:20px;background-color:#f9f9f9;border-radius:8
- px;} 
-.inventory-form h2{font-size:24px;color:#4CAF50;margin-bottom:15px;} 
-label{display:block;font-size:14px;color:#777;margin-bottom:5px;} 
-input,textarea{width:100%;padding:10px;margin-bottom:20px;font-size:16px;border:1px solid 
-#ddd;border-radius:4px;} 
-textarea{min-height:100px;resize:vertical;} 
-button{width:100%;padding:12px;font-size:16px;background-color:#4CAF50;color:white;bord
- er:none;border-radius:4px;cursor:pointer;} 
-button:hover{background-color:#45a049;} 
-.inventory-list{overflow-x:auto;} 
-.inventory-list table{width:100%;border-collapse:collapse;margin-top:20px;} 
-.inventory-list th,.inventory-list td{padding:12px;text-align:center;border-bottom:1px solid 
-#ddd;} 
-.inventory-list th{background-color:#4CAF50;color:white;} 
-.inventory-list td{background-color:#f9f9f9;} 
-.actions button{padding:6px 
-12px;margin:2px;background-color:#f44336;color:white;border:none;border-radius:4px;curso
- r:pointer;width:auto;} 
-.view-button{background-color:#2196F3;} 
-.view-button:hover{background-color:#0b7dda;} 
-.reset-button{margin-top:20px;background-color:#f44336;color:white;padding:10px;width:100
- %;font-size:16px;border-radius:4px;cursor:pointer;} 
-.reset-button:hover{background-color:#e53935;} 
-.toggle-form-button{background-color:#673AB7;margin-bottom:20px;} 
-.toggle-form-button:hover{background-color:#5e35b1;} 
-footer{text-align:center;margin-top:40px;font-size:14px;color:#777;} 
-.search-container{display:flex;justify-content:space-between;margin-bottom:20px;} 
-.search-container input{width:80%;margin-right:10px;} 
-.search-container button{width:18%;} 
-.item-detail{padding:20px;background-color:#f9f9f9;border-radius:8px;margin-bottom:20px;} 
-.item-detail h2{font-size:24px;color:#2196F3;margin-bottom:15px;} 
-.item-image{width:100%;height:200px;background-color:#ddd;display:flex;justify-content:cen
- ter;align-items:center;margin-bottom:20px;border-radius:4px;overflow:hidden;} 
-.item-image img{max-width:100%;max-height:100%;object-fit:contain;} 
-.quantity-control{display:flex;align-items:center;margin-bottom:20px;} 
-.quantity-control button{width:40px;height:40px;font-size:20px;padding:0;border-radius:50%;} 
-.quantity-control input{width:60px;text-align:center;margin:0 10px;} 
-.edit-detail-button{background-color:#FF9800;margin-bottom:10px;} 
-.edit-detail-button:hover{background-color:#F57C00;} 
-.save-detail-button{background-color:#4CAF50;margin-bottom:10px;} 
-.save-detail-button:hover{background-color:#45a049;} 
-.back-button{background-color:#607D8B;margin-bottom:10px;} 
-.back-button:hover{background-color:#546E7A;} 
-.detail-info{margin-bottom:20px;} 
-.detail-info p{margin-bottom:10px;font-size:16px;} 
-.detail-label{font-weight:bold;color:#555;} 
-.detail-value{margin-left:10px;} 
-.detail-view .edit-mode{display:none;} 
-.detail-edit .read-mode{display:none;} 
-.detail-view .read-mode,.detail-edit .edit-mode{display:block;} 
-.clickable{cursor:pointer;text-decoration:underline;color:#2196F3;} 
-.clickable:hover{color:#0b7dda;} 
-.auth-container{max-width:400px;margin:0 
-auto;background-color:#f9f9f9;padding:20px;border-radius:8px;box-shadow:0 4px 6px 
-rgba(0,0,0,0.1);} 
-.app-container{display:none;} 
-.auth-buttons{display:flex;gap:10px;margin-bottom:20px;} 
-.auth-buttons button{flex:1;} 
-.auth-form h2{font-size:24px;color:#4CAF50;margin-bottom:15px;text-align:center;} 
-.active-form{background-color:#45a049;} 
-.form-toggle{margin-top:15px;text-align:center;color:#777;} 
-.form-toggle span{color:#2196F3;cursor:pointer;} 
-.form-toggle span:hover{text-decoration:underline;} 
-</style> 
-</head> 
-<body> 
-<div class="auth-container" id="authContainer"> 
-<div class="auth-buttons"> 
-<button id="signInBtn" onclick="showSignInForm()">Sign In</button> 
-<button id="signUpBtn" onclick="showSignUpForm()">Sign Up</button> 
-</div> 
-<div class="auth-form" id="signInForm"> 
-<h2>Sign In</h2> 
-<form id="loginForm"> 
-<label for="login-username">Username</label> 
-<input type="text" id="login-username" placeholder="Enter your username" required> 
-<label for="login-password">Password</label> 
-<input type="password" id="login-password" placeholder="Enter your password" required> 
-<button type="submit">Sign In</button> 
-</form> 
-<div class="form-toggle"> 
-Don't have an account? <span onclick="showSignUpForm()">Sign Up</span> 
-</div> 
-</div> 
-<div class="auth-form" id="signUpForm" style="display:none;"> 
-<h2>Sign Up</h2> 
-<form id="registerForm"> 
-<label for="register-username">Username</label> 
-<input type="text" id="register-username" placeholder="Create a username" required> 
-<label for="register-password">Password</label> 
-<input type="password" id="register-password" placeholder="Create a password" required> 
-<label for="register-confirm">Confirm Password</label> 
-<input type="password" id="register-confirm" placeholder="Confirm your password" 
-required> 
-<button type="submit">Sign Up</button> 
-</form> 
-<div class="form-toggle"> 
-Already have an account? <span onclick="showSignInForm()">Sign In</span> 
-</div> 
-</div> 
-</div> 
-<div class="container app-container" id="appContainer"> 
-<header> 
-<h1>Inventory Management System</h1> 
-<p id="userDisplay"></p> 
-</header> 
-<div class="search-container"> 
-<input type="text" id="search-bar" placeholder="Search for an item..."> 
-<button onclick="searchItem()">Search</button> 
-</div> 
-<button class="toggle-form-button" onclick="toggleFormPanel()">Add New Item</button> 
-<div class="main-content"> 
-<div class="left-panel"> 
-<section class="inventory-list"> 
-<h2>Inventory List</h2> 
-<table id="inventoryTable"> 
-<thead> 
-<tr> 
-<th>Item</th> 
-<th>Quantity</th> 
-<th>Price</th> 
-<th>Actions</th> 
-</tr> 
-</thead> 
-<tbody> 
-</tbody> 
-</table> 
-</section> 
-</div> 
-<div class="right-panel" id="formPanel"> 
-<section class="inventory-form"> 
-<h2>Add New Item</h2> 
-<form id="inventoryForm"> 
-<label for="item-name">Item Name</label> 
-<input type="text" id="item-name" placeholder="Enter item name" required> 
-<label for="item-quantity">Quantity</label> 
-<input type="number" id="item-quantity" placeholder="Enter quantity" required> 
-<label for="item-price">Price</label> 
-<input type="number" id="item-price" placeholder="Enter price" required> 
-<label for="item-description">Description</label> 
-<textarea id="item-description" placeholder="Enter item description"></textarea> 
-<label for="item-image">Image URL</label> 
-<input type="text" id="item-image" placeholder="Enter image URL"> 
-<button type="submit">Add Item</button> 
-</form> 
-</section> 
-</div> 
-<div class="right-panel detail-view" id="detailPanel"> 
-<div class="item-detail"> 
-<h2 id="detail-title">Item Details</h2> 
-<div class="item-image"> 
-<img id="detail-image" src="" alt="Item Image"> 
-</div> 
-<div class="read-mode"> 
-<div class="detail-info"> 
-<p><span class="detail-label">Description:</span> <span id="detail-description" 
-class="detail-value"></span></p> 
-<p><span class="detail-label">Price:</span> <span id="detail-price" 
-class="detail-value"></span></p> 
-<div class="quantity-control"> 
-<span class="detail-label">Quantity:</span> 
-<button onclick="decreaseQuantity()">-</button> 
-<input type="number" id="detail-quantity" readonly> 
-<button onclick="increaseQuantity()">+</button> 
-</div> 
-<p><span class="detail-label">Total Value:</span> <span id="detail-total" 
-class="detail-value"></span></p> 
-</div> 
-<button class="edit-detail-button" onclick="switchToEditMode()">Edit Details</button> 
-<button class="back-button" onclick="hideDetailPanel()">Back to Inventory</button> 
-</div> 
-<div class="edit-mode"> 
-<form id="editForm"> 
-<label for="edit-name">Item Name</label> 
-<input type="text" id="edit-name" required> 
-<label for="edit-description">Description</label> 
-<textarea id="edit-description"></textarea> 
-<label for="edit-price">Price</label> 
-<input type="number" id="edit-price" required> 
-<label for="edit-quantity">Quantity</label> 
-<input type="number" id="edit-quantity" required> 
-<label for="edit-image">Image URL</label> 
-<input type="text" id="edit-image"> 
-<button type="submit" class="save-detail-button">Save Changes</button> 
-<button type="button" class="back-button" onclick="cancelEdit()">Cancel</button> 
-</form> 
-</div> 
-</div> 
-</div> 
-</div> 
-<button class="reset-button" onclick="resetInventory()">Reset</button> 
-<button class="back-button" style="width:100%;margin-top:10px;" onclick="logout()">Sign 
-Out</button> 
-<footer> 
-<p>Enhanced Inventory Management System</p> 
-</footer> 
-</div> 
-<script> 
-let currentItemIndex=-1; 
-let currentUser=null; 
-function showSignInForm(){ 
-document.getElementById('signInForm').style.display='block'; 
-document.getElementById('signUpForm').style.display='none'; 
-document.getElementById('signInBtn').classList.add('active-form'); 
-document.getElementById('signUpBtn').classList.remove('active-form'); 
-} 
-function showSignUpForm(){ 
-document.getElementById('signInForm').style.display='none'; 
-document.getElementById('signUpForm').style.display='block'; 
-document.getElementById('signInBtn').classList.remove('active-form'); 
-document.getElementById('signUpBtn').classList.add('active-form'); 
-} 
-document.getElementById('registerForm').addEventListener('submit',function(event){ 
-event.preventDefault(); 
-const username=document.getElementById('register-username').value; 
-const password=document.getElementById('register-password').value; 
-const confirmPassword=document.getElementById('register-confirm').value; 
-if(password!==confirmPassword){ 
-alert('Passwords do not match'); 
-return; 
-} 
-const users=JSON.parse(localStorage.getItem('users'))||{}; 
-if(users[username]){ 
-alert('Username already exists'); 
-return; 
-} 
-users[username]={ 
-password:password, 
-inventory:[] 
-}; 
-localStorage.setItem('users',JSON.stringify(users)); 
-alert('Registration successful! Please sign in.'); 
-showSignInForm(); 
-}); 
-document.getElementById('loginForm').addEventListener('submit',function(event){ 
-event.preventDefault(); 
-const username=document.getElementById('login-username').value; 
-const password=document.getElementById('login-password').value; 
-const users=JSON.parse(localStorage.getItem('users'))||{}; 
-if(!users[username]||users[username].password!==password){ 
-alert('Invalid username or password'); 
-return; 
-} 
-currentUser=username; 
-document.getElementById('authContainer').style.display='none'; 
-document.getElementById('appContainer').style.display='block'; 
-document.getElementById('userDisplay').textContent=`Logged in as: ${username}`; 
-loadUserInventory(); 
-}); 
-function loadUserInventory(){ 
-const users=JSON.parse(localStorage.getItem('users'))||{}; 
-if(currentUser&&users[currentUser]){ 
-const tableBody=document.querySelector('#inventoryTable tbody'); 
-tableBody.innerHTML='; 
-users[currentUser].inventory.forEach((item,index)=>{ 
-addItemToInventory(item,index); 
-}); 
-} 
-} 
-function addItemToInventory(item,index){ 
-const tableBody=document.querySelector('#inventoryTable tbody'); 
-const row=document.createElement('tr'); 
-row.innerHTML=` 
-<td class="clickable" onclick="viewItemDetails(${index})">${item.name}</td> 
-<td>${item.quantity}</td> 
-<td>₹${parseFloat(item.price).toFixed(2)}</td> 
-<td class="actions"> 
-<button class="view-button" onclick="viewItemDetails(${index})">View</button> 
-<button onclick="removeItem(this,${index})">Remove</button> 
-</td> 
-`; 
-tableBody.appendChild(row); 
-} 
-function viewItemDetails(index){ 
-const users=JSON.parse(localStorage.getItem('users'))||{}; 
-if(currentUser&&users[currentUser]&&index>=0&&index<users[currentUser].inventory.length
- ){ 
-const item=users[currentUser].inventory[index]; 
-currentItemIndex=index; 
-document.getElementById('formPanel').style.display='none'; 
-document.getElementById('detailPanel').style.display='block'; 
-document.getElementById('detailPanel').classList.remove('detail-edit'); 
-document.getElementById('detailPanel').classList.add('detail-view'); 
-refreshDetailView(item); 
-} 
-} 
-function refreshDetailView(item){ 
-document.getElementById('detail-title').textContent=item.name; 
-document.getElementById('detail-description').textContent=item.description; 
-document.getElementById('detail-price').textContent=`₹${parseFloat(item.price).toFixed(2)}`; 
-document.getElementById('detail-quantity').value=item.quantity; 
-document.getElementById('detail-total').textContent=`₹${(item.price*item.quantity).toFixed(2)
- }`; 
-const imgElement=document.getElementById('detail-image'); 
-imgElement.src=item.image; 
-imgElement.onerror=function(){ 
-this.src='https://via.placeholder.com/200x150?text=No+Image'; 
-}; 
-document.getElementById('edit-name').value=item.name; 
-document.getElementById('edit-description').value=item.description; 
-document.getElementById('edit-price').value=item.price; 
-document.getElementById('edit-quantity').value=item.quantity; 
-document.getElementById('edit-image').value=item.image; 
-} 
-function switchToEditMode(){ 
-document.getElementById('detailPanel').classList.remove('detail-view'); 
-document.getElementById('detailPanel').classList.add('detail-edit'); 
-} 
-function switchToReadMode(){ 
-document.getElementById('detailPanel').classList.remove('detail-edit'); 
-document.getElementById('detailPanel').classList.add('detail-view'); 
-} 
-function cancelEdit(){ 
-switchToReadMode(); 
-const users=JSON.parse(localStorage.getItem('users'))||{}; 
-  
-if(currentUser&&users[currentUser]&&currentItemIndex>=0&&currentItemIndex<users[curre
- ntUser].inventory.length){ 
-    refreshDetailView(users[currentUser].inventory[currentItemIndex]); 
-  } 
-} 
-function hideDetailPanel(){ 
-  document.getElementById('detailPanel').style.display='none'; 
-  currentItemIndex=-1; 
-} 
-function increaseQuantity(){ 
-  if(currentItemIndex>=0){ 
-    const users=JSON.parse(localStorage.getItem('users'))||{}; 
-    
-if(currentUser&&users[currentUser]&&currentItemIndex<users[currentUser].inventory.length)
- { 
-      users[currentUser].inventory[currentItemIndex].quantity++; 
-      localStorage.setItem('users',JSON.stringify(users)); 
-      refreshDetailView(users[currentUser].inventory[currentItemIndex]); 
-      loadUserInventory(); 
-    } 
-  } 
-} 
-function decreaseQuantity(){ 
-  if(currentItemIndex>=0){ 
-    const users=JSON.parse(localStorage.getItem('users'))||{}; 
-    
-if(currentUser&&users[currentUser]&&currentItemIndex<users[currentUser].inventory.length
- &&users[currentUser].inventory[currentItemIndex].quantity>0){ 
-      users[currentUser].inventory[currentItemIndex].quantity--; 
-      localStorage.setItem('users',JSON.stringify(users)); 
-      refreshDetailView(users[currentUser].inventory[currentItemIndex]); 
-      loadUserInventory(); 
-    } 
-  } 
-} 
-document.getElementById('inventoryForm').addEventListener('submit',function(event){ 
-  event.preventDefault(); 
-  const itemName=document.getElementById('item-name').value; 
-  const itemQuantity=document.getElementById('item-quantity').value; 
-  const itemPrice=document.getElementById('item-price').value; 
-  const itemDescription=document.getElementById('item-description').value; 
-  const itemImage=document.getElementById('item-image').value; 
-  if(itemName&&itemQuantity&&itemPrice){ 
-    const newItem={ 
-      name:itemName, 
-      quantity:parseInt(itemQuantity), 
-      price:parseFloat(itemPrice), 
-      description:itemDescription||'No description available', 
-      image:itemImage||'https://via.placeholder.com/200x150?text=No+Image' 
-    }; 
-    const users=JSON.parse(localStorage.getItem('users'))||{}; 
-    if(currentUser&&users[currentUser]){ 
-      users[currentUser].inventory.push(newItem); 
-      localStorage.setItem('users',JSON.stringify(users)); 
-      loadUserInventory(); 
-      clearForm(); 
-      toggleFormPanel(); 
-    } 
-  }else{ 
-    alert('Please fill out all required fields'); 
-  } 
-}); 
-document.getElementById('editForm').addEventListener('submit',function(event){ 
-  event.preventDefault(); 
-  if(currentItemIndex>=0){ 
-    const updatedItem={ 
-      name:document.getElementById('edit-name').value, 
-      description:document.getElementById('edit-description').value, 
-      price:parseFloat(document.getElementById('edit-price').value), 
-      quantity:parseInt(document.getElementById('edit-quantity').value), 
-      image:document.getElementById('edit-image').value 
-    }; 
-    const users=JSON.parse(localStorage.getItem('users'))||{}; 
-    
-if(currentUser&&users[currentUser]&&currentItemIndex>=0&&currentItemIndex<users[curre
- ntUser].inventory.length){ 
-      users[currentUser].inventory[currentItemIndex]=updatedItem; 
-      localStorage.setItem('users',JSON.stringify(users)); 
-      switchToReadMode(); 
-      refreshDetailView(updatedItem); 
-      loadUserInventory(); 
-    } 
-  } 
-}); 
-function toggleFormPanel(){ 
-  const formPanel=document.getElementById('formPanel'); 
-  const detailPanel=document.getElementById('detailPanel'); 
-  if(formPanel.style.display==='none'||formPanel.style.display===''){ 
-    formPanel.style.display='block'; 
-    detailPanel.style.display='none'; 
-  }else{ 
-    formPanel.style.display='none'; 
-  } 
-} 
-function clearForm(){ 
-  document.getElementById('item-name').value=''; 
-  document.getElementById('item-quantity').value=''; 
-  document.getElementById('item-price').value=''; 
-  document.getElementById('item-description').value=''; 
-  document.getElementById('item-image').value=''; 
-} 
-function removeItem(button,index){ 
-  const users=JSON.parse(localStorage.getItem('users'))||{}; 
-  if(currentUser&&users[currentUser]){ 
-    users[currentUser].inventory.splice(index,1); 
-    localStorage.setItem('users',JSON.stringify(users)); 
-    if(currentItemIndex===index){ 
-      hideDetailPanel(); 
-    } 
-    loadUserInventory(); 
-  } 
-} 
-function resetInventory(){ 
-  if(confirm('Are you sure you want to reset? This will clear all inventory data.')){ 
-    const users=JSON.parse(localStorage.getItem('users'))||{}; 
-    if(currentUser&&users[currentUser]){ 
-      users[currentUser].inventory=[]; 
-      localStorage.setItem('users',JSON.stringify(users)); 
-      loadUserInventory(); 
-      hideDetailPanel(); 
-    } 
-  } 
-} 
-function searchItem(){ 
-  const searchTerm=document.getElementById('search-bar').value.toLowerCase(); 
-  const rows=document.querySelectorAll('#inventoryTable tbody tr'); 
-  rows.forEach(row=>{ 
-    const itemName=row.cells[0].textContent.toLowerCase(); 
-    if(itemName.includes(searchTerm)){ 
-      row.style.display=''; 
-    }else{ 
-      row.style.display='none'; 
-    } 
-  }); 
-} 
-function logout(){ 
-  currentUser=null; 
-  currentItemIndex=-1; 
-  document.getElementById('authContainer').style.display='block'; 
-  document.getElementById('appContainer').style.display='none'; 
-  showSignInForm(); 
-} 
-window.onload=function(){ 
-document.getElementById('signInBtn').classList.add('active-form'); 
-}; 
-</script> 
-</body> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Inventory Management System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Inventory Management System</h1>
+      <div class="header-buttons">
+        <button class="chat-toggle" id="chatToggleBtn">
+          <span class="chat-toggle-icon">💬</span>
+        </button>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <span class="theme-toggle-icon">☀</span>
+        </button>
+      </div>
+    </header>
+    <!-- Search Bar Section -->
+    <div class="search-container">
+      <input type="text" id="search-bar" placeholder="Search for an item...">
+      <button onclick="searchItem()">Search</button>
+    </div>
+    <button class="toggle-form-button" onclick="toggleFormPanel()">Add New Item</button>
+    <div class="main-content">
+      <!-- Left Panel - Inventory List -->
+      <div class="left-panel">
+        <section class="inventory-list">
+          <h2>Inventory List</h2>
+          <table id="inventoryTable">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Inventory items will be dynamically inserted here -->
+            </tbody>
+          </table>
+        </section>
+      </div>
+      <!-- Right Panel - Add/Edit Form -->
+      <div class="right-panel" id="formPanel">
+        <section class="inventory-form">
+          <h2>Add New Item</h2>
+          <form id="inventoryForm">
+            <label for="item-name">Item Name</label>
+            <input type="text" id="item-name" placeholder="Enter item name" required>
+            <label for="item-quantity">Quantity</label>
+            <input type="number" id="item-quantity" placeholder="Enter quantity" required>
+            <label for="item-price">Price</label>
+            <input type="number" id="item-price" placeholder="Enter price" required>
+            <label for="item-description">Description</label>
+            <textarea id="item-description" placeholder="Enter item description"></textarea>
+            <label for="item-image">Image URL</label>
+            <input type="text" id="item-image" placeholder="Enter image URL">
+            <button type="submit">Add Item</button>
+          </form>
+        </section>
+      </div>
+      <!-- Item Detail View (Initially Hidden) -->
+      <div class="right-panel detail-view" id="detailPanel">
+        <div class="item-detail">
+          <h2 id="detail-title">Item Details</h2>
+          <div class="item-image">
+            <img id="detail-image" src="" alt="Item Image">
+          </div>
+          <!-- Read Mode -->
+          <div class="read-mode">
+            <div class="detail-info">
+              <p><span class="detail-label">Description:</span> <span id="detail-description" class="detail-value"></span></p>
+              <p><span class="detail-label">Price:</span> <span id="detail-price" class="detail-value"></span></p>
+              <div class="quantity-control">
+                <span class="detail-label">Quantity:</span>
+                <button onclick="decreaseQuantity()">-</button>
+                <input type="number" id="detail-quantity" readonly>
+                <button onclick="increaseQuantity()">+</button>
+              </div>
+              <p><span class="detail-label">Total Value:</span> <span id="detail-total" class="detail-value"></span></p>
+            </div>
+            <button class="edit-detail-button" onclick="switchToEditMode()">Edit Details</button>
+            <button class="back-button" onclick="hideDetailPanel()">Back to Inventory</button>
+          </div>
+          <!-- Edit Mode -->
+          <div class="edit-mode">
+            <form id="editForm">
+              <label for="edit-name">Item Name</label>
+              <input type="text" id="edit-name" required>
+              <label for="edit-description">Description</label>
+              <textarea id="edit-description"></textarea>
+              <label for="edit-price">Price</label>
+              <input type="number" id="edit-price" required>
+              <label for="edit-quantity">Quantity</label>
+              <input type="number" id="edit-quantity" required>
+              <label for="edit-image">Image URL</label>
+              <input type="text" id="edit-image">
+              <button type="submit" class="save-detail-button">Save Changes</button>
+              <button type="button" class="back-button" onclick="cancelEdit()">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Chatbot Component -->
+    <div class="chatbot-container" id="chatbotContainer">
+      <div class="chatbot-header">
+        <h3>Inventory Assistant</h3>
+        <button class="close-chat" onclick="toggleChatbot()">×</button>
+      </div>
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="bot-message">Hello! I'm your inventory assistant. How can I help you today?</div>
+      </div>
+      <div class="chatbot-input">
+        <input type="text" id="chatInput" placeholder="Type your question here...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+    <!-- Exit Button -->
+    <button class="exit-button" onclick="exitInventory()">Exit</button>
+    <footer>
+      <p>Enhanced Inventory Management System</p>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
 </html>
